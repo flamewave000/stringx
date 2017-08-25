@@ -12,6 +12,8 @@
 #endif
 
 namespace strx {
+	const struct __endf {} endf;
+	const struct __endfclr {} endfclr;
 	/// <summary>
 	/// Formatter for <seealso cref="::std::string"/> which provides simplified string formatting
 	/// </summary>
@@ -28,24 +30,24 @@ namespace strx {
 	/// </example>
 	class format
 	{
-#pragma region internal classes
-	private:
-		struct __end {};
-		struct __endclr {};
-#pragma endregion
-
-
-#pragma region class variables
-	public:
-		/// <summary>
-		/// Signifies the end of a string format. Will cause the formatter to return a string at the end.
-		/// </summary>
-		static __end end;
-		/// <summary>
-		/// Signifies the end of a string format. Will cause the formatter to return a string at the end, then clear the provided parameters.
-		/// </summary>
-		static __endclr endclr;
-#pragma endregion
+//#pragma region internal classes
+//	private:
+//		struct __end {};
+//		struct __endclr {};
+//#pragma endregion
+//
+//
+//#pragma region class variables
+//	public:
+//		/// <summary>
+//		/// Signifies the end of a string format. Will cause the formatter to return a string at the end.
+//		/// </summary>
+//		static __end end;
+//		/// <summary>
+//		/// Signifies the end of a string format. Will cause the formatter to return a string at the end, then clear the provided parameters.
+//		/// </summary>
+//		static __endclr endclr;
+//#pragma endregion
 
 
 #pragma region instance variables
@@ -68,12 +70,9 @@ namespace strx {
 
 #pragma region operator overloads
 	public:
-		inline ::std::string &operator[](const size_t &index) {
-			return _params[index];
-		}
-		inline const ::std::string &operator[](const size_t &index) const {
-			return _params[index];
-		}
+		inline ::std::string &operator[](const size_t &index) { return _params[index]; }
+		inline const ::std::string &operator[](const size_t &index) const { return _params[index]; }
+
 		inline format& operator%(const char &c) {
 			_params.push_back(::std::string(1, c));
 			return *this;
@@ -118,12 +117,8 @@ namespace strx {
 			_params.push_back(str);
 			return *this;
 		}
-		inline ::std::string operator%(const __end &e) const {
-			return this->str();
-		}
-		inline ::std::string operator%(const __endclr &e) {
-			return this->strclr();
-		}
+		inline ::std::string operator%(const __endf &e) const { return this->str(); }
+		inline ::std::string operator%(const __endfclr &e) { return this->strclr(); }
 #pragma endregion
 
 
@@ -133,37 +128,27 @@ namespace strx {
 		/// Provides the number of parameters which have been provided so far.
 		/// </summary>
 		/// <returns>Number of parameters provided so far.</returns>
-		inline size_t count() {
-			return _params.size();
-		}
+		inline size_t count() { return _params.size(); }
 		/// <summary>
 		/// Appends the provided string onto the end of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be added to list.</param>
-		inline void append(const ::std::string &arg) {
-			_params.push_back(arg);
-		}
+		inline void append(const ::std::string &arg) { _params.push_back(arg); }
 		/// <summary>
 		/// Inserts the provided string into the provided index of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be inserted in the list</param>
-		inline void insert(const size_t &index, const ::std::string &arg) {
-			_params.insert(_params.begin() + index, arg);
-		}
+		inline void insert(const size_t &index, const ::std::string &arg) { _params.insert(_params.begin() + index, arg); }
 		/// <summary>
 		/// Replaces the formatted string parameter at the given index in the parameter list.
 		/// </summary>
 		/// <param name="index">Index of parameter to be replaced.</param>
 		/// <param name="arg">New value that is to replace the old value.</param>
-		inline void replace(size_t index, ::std::string arg) {
-			_params[index] = arg;
-		}
+		inline void replace(size_t index, ::std::string arg) { _params[index] = arg; }
 		/// <summary>
 		/// Clears all parameters provided up until now.
 		/// </summary>
-		inline void clear() {
-			_params.clear();
-		}
+		inline void clear() { _params.clear(); }
 		/// <summary>
 		/// Builds the formatted string using the previously provided parameters.
 		/// </summary>
@@ -193,6 +178,12 @@ namespace strx {
 	};
 
 #pragma region Formatter User Defined Literals
+	/// <summary>
+	/// Instantiates a string formatter using the provided string literal.
+	/// </summary>
+	/// <param name="c_str">String literal to use.</param>
+	/// <param name="length">Length of the string literal.</param>
+	/// <returns>Format object using the string literal.</returns>
 	inline format operator "" _f(const char *c_str, size_t length) { return ::std::move(format(::std::string(::std::move(c_str), ::std::move(length)))); }
 #pragma endregion
 

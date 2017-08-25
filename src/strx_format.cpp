@@ -3,8 +3,8 @@
 
 using namespace std;
 namespace strx {
-	format::__end format::end = format::__end();
-	format::__endclr format::endclr = format::__endclr();
+	//format::__end format::end = format::__end();
+	//format::__endclr format::endclr = format::__endclr();
 
 	string format::str() const {
 		string result = _buffer;
