@@ -71,7 +71,7 @@ namespace strx {
 		}
 		return sstream.str();
 	}
-	std::string replace(const std::string &str, const std::string *patterns, size_t length, const std::string &replacement)
+	std::string replace(const std::string &str, const std::string patterns[], size_t length, const std::string &replacement)
 	{
 		string buff = "";
 		size_t c = 0, psize;
