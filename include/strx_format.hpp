@@ -5,7 +5,11 @@
 #include "strx_manip.hpp"
 #endif
 
+#ifndef _VECTOR_
+#ifndef _GLIBCXX_VECTOR
 #include <vector>
+#endif
+#endif
 
 namespace strx {
 	/// <summary>

@@ -1,7 +1,17 @@
 #define _CRT_SECURE_NO_WARNINGS 1
+
 #include "../include/strx_manip.hpp"
+
+#ifndef _SSTREAM_
+#ifndef _GLIBCXX_SSTREAM
 #include <sstream>
+#endif
+#endif
+#ifndef _CSTDIO_
+#ifndef _GLIBCXX_CSTDIO
 #include <cstdio>
+#endif
+#endif
 
 using namespace std;
 
