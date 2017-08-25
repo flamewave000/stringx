@@ -126,6 +126,7 @@ namespace strx {
 	/// <returns>Padded string</returns>
 	inline ::std::string lpad(::std::string str, ::std::size_t width, const char pad = ' ')
 	{
+		if (width < str.size()) return str;
 		width -= str.size();
 		return width > 0 ? str.insert(0, width, pad) : str;
 	}
@@ -139,6 +140,7 @@ namespace strx {
 	inline ::std::string rpad(::std::string str, ::std::size_t width, const char pad = ' ')
 	{
 		size_t size = str.size();
+		if (width < size) return str;
 		width -= size;
 		return width > 0 ? str.insert(size, width, pad) : str;
 	}
