@@ -12,8 +12,31 @@
 #endif
 
 namespace strx {
+#pragma region specialized formatter tokens
 	const struct __endf {} endf;
 	const struct __endfclr {} endfclr;
+#pragma endregion
+
+
+#pragma region namespace level methods
+	/// <summary>
+	/// Generates a specialized string representation of the provided value <paramref name="arg"/>.
+	/// </summary>
+	/// <param name="fmt">The specialized format the value is to be formatted to. (i.e "%#.2f")</param>
+	/// <param name="arg">The value to be formatted into the resulting string.</param>
+	/// <param name="buff_size">The size of buffer to use for the underlying <seealso cref="snprintf"/> call.</param>
+	/// <returns>The formatted string.</returns>
+	template<typename T>
+	static ::std::string spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
+		::std::string buff;
+		buff.resize(buff_size + 1);
+		int written = snprintf(const_cast<char*>(buff.data()), buff.size(), fmt, arg);
+		buff = buff.substr(0, written);
+		return buff;
+	}
+#pragma endregion
+
+
 	/// <summary>
 	/// Formatter for <seealso cref="::std::string"/> which provides simplified string formatting
 	/// </summary>
@@ -30,26 +53,6 @@ namespace strx {
 	/// </example>
 	class format
 	{
-//#pragma region internal classes
-//	private:
-//		struct __end {};
-//		struct __endclr {};
-//#pragma endregion
-//
-//
-//#pragma region class variables
-//	public:
-//		/// <summary>
-//		/// Signifies the end of a string format. Will cause the formatter to return a string at the end.
-//		/// </summary>
-//		static __end end;
-//		/// <summary>
-//		/// Signifies the end of a string format. Will cause the formatter to return a string at the end, then clear the provided parameters.
-//		/// </summary>
-//		static __endclr endclr;
-//#pragma endregion
-
-
 #pragma region instance variables
 	private:
 		::std::string _buffer;
@@ -159,21 +162,6 @@ namespace strx {
 		/// </summary>
 		/// <returns>Formatted string.</returns>
 		::std::string strclr();
-		/// <summary>
-		/// Generates a specialized string representation of the provided value <paramref name="arg"/>.
-		/// </summary>
-		/// <param name="fmt">The specialized format the value is to be formatted to. (i.e "%#.2f")</param>
-		/// <param name="arg">The value to be formatted into the resulting string.</param>
-		/// <param name="buff_size">The size of buffer to use for the underlying <seealso cref="snprintf"/> call.</param>
-		/// <returns>The formatted string.</returns>
-		template<typename T>
-		static ::std::string spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
-			::std::string buff;
-			buff.resize(buff_size + 1);
-			int written = snprintf(const_cast<char*>(buff.data()), buff.size(), fmt, arg);
-			buff = buff.substr(0, written);
-			return buff;
-		}
 #pragma endregion
 	};
 
@@ -189,6 +177,14 @@ namespace strx {
 
 
 #pragma region Global Operator Overloads
+	/// <summary>
+	/// Prints out the formatted string to the provided <seealso cref="::std::ostream"/>
+	/// so a formatter can be used within a standard output stream chain.
+	/// </summary>
+	/// <param name="out">Output stream for printing.</param>
+	/// <param name="fmt">Format object to be printed to the output stream.</param>
+	/// <returns>The original output stream.</returns>
+	inline ::std::ostream& operator<<(::std::ostream& out, const format& fmt) { return out << fmt.str(); }
 	inline format operator%(const ::std::string &str, const char &val) { return format(str) % val; }
 	inline format operator%(const ::std::string &str, const int16_t &val) { return format(str) % val; }
 	inline format operator%(const ::std::string &str, const uint16_t &val) { return format(str) % val; }
