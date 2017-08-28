@@ -55,8 +55,10 @@ namespace strx {
 	{
 #pragma region instance variables
 	private:
-		::std::string _buffer;
+		::std::string _fmt;
+		::std::string _val;
 		::std::vector<::std::string> _params;
+		bool _is_dirty;
 #pragma endregion
 
 
@@ -66,9 +68,17 @@ namespace strx {
 		/// Constructs the formatter using the provided <paramref name="format"/> string.
 		/// </summary>
 		/// <param name="format">Format string</param>
-		format(const ::std::string &format) : _buffer(format) {}
-		format(const char *format) : _buffer(format) {}
+		format(const ::std::string &format) : _fmt(format) {}
+		format(const char *format) : _fmt(format) {}
 #pragma endregion
+
+
+	private:
+		inline format& set_param(const ::std::string &&param) {
+			_is_dirty = true;
+			_params.push_back(param);
+			return *this;
+		}
 
 
 #pragma region operator overloads
@@ -76,51 +86,18 @@ namespace strx {
 		inline ::std::string &operator[](const size_t &index) { return _params[index]; }
 		inline const ::std::string &operator[](const size_t &index) const { return _params[index]; }
 
-		inline format& operator%(const char &c) {
-			_params.push_back(::std::string(1, c));
-			return *this;
-		}
-		inline format& operator%(const int16_t &s) {
-			_params.push_back(spec("%hd", s, 6));
-			return *this;
-		}
-		inline format& operator%(const uint16_t &s) {
-			_params.push_back(spec("%hu", s, 6));
-			return *this;
-		}
-		inline format& operator%(const int32_t &i) {
-			_params.push_back(spec("%d", i, 11));
-			return *this;
-		}
-		inline format& operator%(const uint32_t &i) {
-			_params.push_back(spec("%du", i, 11));
-			return *this;
-		}
-		inline format& operator%(const int64_t &l) {
-			_params.push_back(spec("%ll", l, 20));
-			return *this;
-		}
-		inline format& operator%(const uint64_t &l) {
-			_params.push_back(spec("%llu", l, 21));
-			return *this;
-		}
-		inline format& operator%(const float &f) {
-			_params.push_back(spec("%f", f, 30));
-			return *this;
-		}
-		inline format& operator%(const double &d) {
-			_params.push_back(spec("%f", d, 30));
-			return *this;
-		}
-		inline format& operator%(const char* c_str) {
-			_params.push_back(c_str);
-			return *this;
-		}
-		inline format& operator%(const ::std::string &str) {
-			_params.push_back(str);
-			return *this;
-		}
-		inline ::std::string operator%(const __endf &e) const { return this->str(); }
+		inline format& operator%(const char &c) { return set_param(::std::string(1, c)); }
+		inline format& operator%(const int16_t &s) { return set_param(spec("%hd", s, 6)); }
+		inline format& operator%(const uint16_t &s) { return set_param(spec("%hu", s, 6)); }
+		inline format& operator%(const int32_t &i) { return set_param(spec("%d", i, 11)); }
+		inline format& operator%(const uint32_t &i) { return set_param(spec("%du", i, 11)); }
+		inline format& operator%(const int64_t &l) { return set_param(spec("%ll", l, 20)); }
+		inline format& operator%(const uint64_t &l) { return set_param(spec("%llu", l, 21)); }
+		inline format& operator%(const float &f) { return set_param(spec("%f", f, 30)); }
+		inline format& operator%(const double &d) { return set_param(spec("%f", d, 30)); }
+		inline format& operator%(const char* c_str) { return set_param(c_str); }
+		inline format& operator%(const ::std::string &str) { return set_param(str.c_str()); }
+		inline ::std::string operator%(const __endf &e) { return this->str(); }
 		inline ::std::string operator%(const __endfclr &e) { return this->strclr(); }
 #pragma endregion
 
@@ -136,27 +113,27 @@ namespace strx {
 		/// Appends the provided string onto the end of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be added to list.</param>
-		inline void append(const ::std::string &arg) { _params.push_back(arg); }
+		inline void append(const ::std::string &arg) { _is_dirty = true; _params.push_back(arg); }
 		/// <summary>
 		/// Inserts the provided string into the provided index of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be inserted in the list</param>
-		inline void insert(const size_t &index, const ::std::string &arg) { _params.insert(_params.begin() + index, arg); }
+		inline void insert(const size_t &index, const ::std::string &arg) { _is_dirty = true; _params.insert(_params.begin() + index, arg); }
 		/// <summary>
 		/// Replaces the formatted string parameter at the given index in the parameter list.
 		/// </summary>
 		/// <param name="index">Index of parameter to be replaced.</param>
 		/// <param name="arg">New value that is to replace the old value.</param>
-		inline void replace(size_t index, ::std::string arg) { _params[index] = arg; }
+		inline void replace(size_t index, ::std::string arg) { _is_dirty = true; _params[index] = arg; }
 		/// <summary>
 		/// Clears all parameters provided up until now.
 		/// </summary>
-		inline void clear() { _params.clear(); }
+		inline void clear() { _is_dirty = true; _params.clear(); }
 		/// <summary>
 		/// Builds the formatted string using the previously provided parameters.
 		/// </summary>
 		/// <returns>Formatted string.</returns>
-		::std::string str() const;
+		::std::string str();
 		/// <summary>
 		/// Builds the formatted string using the previously provided parameters, then clears the parameters.
 		/// </summary>
@@ -184,7 +161,7 @@ namespace strx {
 	/// <param name="out">Output stream for printing.</param>
 	/// <param name="fmt">Format object to be printed to the output stream.</param>
 	/// <returns>The original output stream.</returns>
-	inline ::std::ostream& operator<<(::std::ostream& out, const format& fmt) { return out << fmt.str(); }
+	inline ::std::ostream& operator<<(::std::ostream& out, format& fmt) { return out << fmt.str(); }
 	inline format operator%(const ::std::string &str, const char &val) { return format(str) % val; }
 	inline format operator%(const ::std::string &str, const int16_t &val) { return format(str) % val; }
 	inline format operator%(const ::std::string &str, const uint16_t &val) { return format(str) % val; }
