@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include "../include/strx_format.hpp"
+#include <stdexcept>
 
 using namespace std;
 
@@ -28,7 +29,7 @@ namespace strx
 				size_t index = (size_t)stoull(index_str, nullptr, 10);
 				// Safety check index is within range
 				if (index < 0 || index >= param_size) {
-					throw std::range_error("format index '" + index_str + "' out of range for provided parameter list");
+					throw range_error("format index '" + index_str + "' out of range for provided parameter list");
 					return "";
 				}
 				// Replace the bracketed index with the referenced parameter
