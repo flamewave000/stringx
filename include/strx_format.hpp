@@ -27,7 +27,7 @@ namespace strx {
 	/// <param name="buff_size">The size of buffer to use for the underlying <seealso cref="snprintf"/> call.</param>
 	/// <returns>The formatted string.</returns>
 	template<typename T>
-	static ::std::string spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
+	::std::string spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
 		::std::string buff;
 		buff.resize(buff_size + 1);
 		int written = snprintf(const_cast<char*>(buff.data()), buff.size(), fmt, arg);

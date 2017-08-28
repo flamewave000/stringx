@@ -2,20 +2,49 @@
 #include "../include/strx_format.hpp"
 
 using namespace std;
-namespace strx {
+
+namespace strx
+{
 	string format::str() {
-		if (_is_dirty) {
-			_is_dirty = false;
-			string result = _fmt;
-			char buff[13] = { 0,0,0,0,0,0,0,0,0,0,0,0,0 };
-			for (size_t c = 0, size = _params.size(); c < size; c++) {
-				sprintf(buff, "{%zd}", c);
-				// TODO: Handle bracket escaping. '{{0}' should print as '{0}' and not formatted.
-				result = strx::replace(result, buff, _params[c]);
+		if (!_is_dirty) return _val;
+		size_t first = string::npos, param_size = _params.size();
+		string buffer = _fmt;
+		for (size_t c = 0, size = buffer.size(); c < size; c++) {
+			// If we find the start of an index token
+			if (buffer[c] == '{') {
+				// If this is the first found
+				if (first == string::npos) first = c;
+				// Otherwise this is a second one and the bracket should now be escaped
+				else {
+					buffer.erase(c);
+					first = string::npos;
+				}
 			}
-			_val = move(result);
+			// If we have found the last one
+			else if (buffer[c] == '}' && first != string::npos) {
+				// Extract the index number of the format token
+				string index_str = buffer.substr(first + 1, (c - first) - 1);
+				// Convert the index string to an integer
+				size_t index = (size_t)stoull(index_str, nullptr, 10);
+				// Safety check index is within range
+				if (index < 0 || index >= param_size) {
+					throw std::range_error("format index '" + index_str + "' out of range for provided parameter list");
+					return "";
+				}
+				// Replace the bracketed index with the referenced parameter
+				buffer = buffer.replace(first, (c - first) + 1, _params[index]);
+				// Adjust index end of replacement
+				c = (first - 1) + _params[index].size();
+				size = buffer.size();
+				first = string::npos;
+			}
+			// If we hit a non decimal character, then our formatter token breaks and is ignored.
+			else if (first != string::npos && (buffer[c] > '9' || buffer[c] < '0')) {
+				first = string::npos;
+			}
 		}
-		return _val;
+		_is_dirty = false;
+		return _val = buffer;
 	}
 	string format::strclr() {
 		string result = str();
