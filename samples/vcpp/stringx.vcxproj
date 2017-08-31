@@ -124,7 +124,7 @@
     <ClCompile Include="..\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\include\stringx.h" />
+    <None Include="..\..\include\stringx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\strx_format.hpp" />
