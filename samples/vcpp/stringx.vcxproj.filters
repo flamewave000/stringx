@@ -34,7 +34,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\include\stringx">
+    <None Include="..\..\include\stringx.hpp">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
