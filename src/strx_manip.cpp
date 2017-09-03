@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 
-#include "../include/strx_manip.hpp"
+#include "strx_manip.hpp"
 
 #ifndef _SSTREAM_
 #ifndef _GLIBCXX_SSTREAM

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <limits>
-#include "../include/stringx.hpp"
+#include "stringx.hpp"
 
 using namespace std;
 using namespace strx;

@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS 1
-#include "../include/strx_format.hpp"
+#include "strx_format.hpp"
 #include <stdexcept>
 
 using namespace std;
