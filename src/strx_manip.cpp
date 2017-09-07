@@ -16,9 +16,9 @@
 using namespace std;
 
 namespace strx {
-	const std::string whitespace = " \n\r\t\v\f";
+	const char * whitespace = " \n\r\t\v\f";
 
-	size_t find_first_of_pat(const std::string &str, const std::string &pattern)
+	size_t find_first_of_pat(const std::string_view &str, const std::string_view &pattern)
 	{
 		size_t c = 0, i = 0, size = str.size(), psize = pattern.size();
 		if (size == 0 || psize == 0) {
@@ -69,55 +69,53 @@ namespace strx {
 		}
 		return sstream.str();
 	}
-	string join(const vector<string> &tokens, const string &delim)
+	string join(const vector<string> &tokens, const string_view &delim)
 	{
 		ostringstream sstream;
 		bool first = true;
 		for (auto token : tokens)
 		{
-			if (!first) sstream << delim;
+			if (!first) sstream << delim.data();
 			else first = false;
 			sstream << token;
 		}
 		return sstream.str();
 	}
-	std::string replace(const std::string &str, const std::string patterns[], size_t length, const std::string &replacement)
+	std::string replace(string str, const string patterns[], size_t length, const std::string_view &replacement)
 	{
 		string buff = "";
 		size_t c = 0, psize;
 		size_t offset = 0;
 		const string *pattern;
-		string src = str;
 		for (size_t i = 0; i < length; i++)
 		{
 			c = 0;
 			pattern = patterns + i;
 			psize = pattern->size();
-			while ((c = src.find_first_of(*pattern)) != str.npos)
+			while ((c = str.find_first_of(*pattern)) != str.npos)
 			{
-				buff += src.substr(offset, c);
+				buff += str.substr(offset, c);
 				buff += replacement;
 				offset = c + psize;
 			}
-			if (offset < src.size()) {
-				buff += src.substr(offset);
+			if (offset < str.size()) {
+				buff += str.substr(offset);
 			}
-			src = buff;
+			str = buff;
 			buff = "";
 		}
-		return src;
+		return str;
 	}
-	string replace(const string &str, const string &pattern, const string &replacement)
+	string replace(string str, const string_view &pattern, const string_view &replacement)
 	{
-		string result(str);
 		size_t c = 0, psize = pattern.size();
-		while ((c = find_first_of_pat(result, pattern)) != result.npos)
+		while ((c = find_first_of_pat(str, pattern)) != str.npos)
 		{
-			result = result.replace(c, psize, replacement);
+			str = str.replace(c, psize, replacement);
 		}
-		return result;
+		return str;
 	}
-	string replace(const string &str, const char &pattern, const string &replacement)
+	string replace(const string_view &str, const char &pattern, const string_view &replacement)
 	{
 		string result = "";
 		size_t c = 0;
@@ -133,7 +131,7 @@ namespace strx {
 		}
 		return result;
 	}
-	string replace(const string &str, const string &pattern, const char &replacement)
+	string replace(const string_view &str, const string_view &pattern, const char &replacement)
 	{
 		string result = "";
 		size_t c = 0;
@@ -149,16 +147,15 @@ namespace strx {
 		}
 		return result;
 	}
-	string replace(const string &str, const char &pattern, const char &replacement)
+	string replace(string str, const char &pattern, const char &replacement)
 	{
-		string result(str);
-		size_t size = result.size();
-		const char *cstr = result.c_str();
+		size_t size = str.size();
+		const char *cstr = str.c_str();
 		const void *c = nullptr;
 		while ((c = memchr(cstr, replacement, size)) != nullptr) {
 			*((char*)c) = replacement;
 		}
-		return result;
+		return str;
 	}
 
 	string str2lower(string str) {
@@ -179,7 +176,7 @@ namespace strx {
 	}
 
 	string ftos(string path) {
-		FILE * file = fopen(path.c_str(), "r");
+		FILE * file = fopen(path.data(), "r");
 		if (file != nullptr) {
 			char buff[256];
 			memset(buff, 0, 256);

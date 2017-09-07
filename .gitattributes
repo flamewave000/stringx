@@ -5,3 +5,4 @@
 *.cpp text eol=lf
 *.sln text eol=crlf
 *.vcxproj* text eol=crlf
+.git* text eol=lf

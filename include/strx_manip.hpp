@@ -21,7 +21,7 @@ namespace strx {
 	/// <summary>
 	/// String constant containing the common white-space characters.
 	/// </summary>
-	extern const ::std::string whitespace;
+	extern const char * whitespace;
 
 	/// <summary>
 	/// Checks if the given character exists within the provided string.
@@ -29,21 +29,21 @@ namespace strx {
 	/// <param name="str">String to be searched.</param>
 	/// <param name="c">Character to search for.</param>
 	/// <returns>true if the character is found; otherwise false.</returns>
-	inline bool contains(const ::std::string &str, const char &c) { return str.find_first_of(c) != ::std::string::npos; }
+	inline bool contains(const ::std::string_view &str, const char &c) { return str.find_first_of(c) != ::std::string::npos; }
 	/// <summary>
 	/// Checks if the given query exists within the provided target.
 	/// </summary>
 	/// <param name="target">Target string to be searched.</param>
 	/// <param name="query">String to be searched for</param>
 	/// <returns>true if the query is found; otherwise false.</returns>
-	inline bool contains(const ::std::string &target, const ::std::string &query) { return target.find(query) != ::std::string::npos; }
+	inline bool contains(const ::std::string_view &target, const ::std::string_view &query) { return target.find(query) != ::std::string::npos; }
 	/// <summary>
 	/// Checks if the provided string starts with the provided pattern.
 	/// </summary>
 	/// <param name="str">String to be checked.</param>
 	/// <param name="pattern">String to look for.</param>
 	/// <returns>true if the pattern is found; otherwise false</returns>
-	inline bool starts_with(const ::std::string & str, const ::std::string &pattern) { return str.size() >= pattern.size() && str.find_first_of(pattern) == 0; }
+	inline bool starts_with(const ::std::string_view & str, const ::std::string_view &pattern) { return str.size() >= pattern.size() && str.find_first_of(pattern) == 0; }
 
 	/// <summary>
 	/// Searches the provided string and returns the index of the first occurrence of the provided <paramref name="pattern"/>.
@@ -51,7 +51,7 @@ namespace strx {
 	/// <param name="str">String to be searched.</param>
 	/// <param name="pattern">Pattern to look for.</param>
 	/// <returns>true if the pattern is found; otherwise false</returns>
-	::std::size_t find_first_of_pat(const ::std::string &str, const ::std::string &pattern);
+	::std::size_t find_first_of_pat(const ::std::string_view &str, const ::std::string_view &pattern);
 	/// <summary>
 	/// Splits the provided string into an array of strings using a provided delimiter as the split point.
 	/// </summary>
@@ -73,7 +73,7 @@ namespace strx {
 	/// <param name="tokens">Tokens to be joined into a single string.</param>
 	/// <param name="delim">Delimiter to separate the tokens within the new string.</param>
 	/// <returns>Single string of concatenated tokens and delimiters.</returns>
-	::std::string join(const ::std::vector<::std::string> &tokens, const ::std::string &delim);
+	::std::string join(const ::std::vector<::std::string> &tokens, const ::std::string_view &delim);
 
 	/// <summary>
 	/// Replaces portions of the provided string that match the patterns with the provided replacement string.
@@ -83,7 +83,7 @@ namespace strx {
 	/// <param name="length">Length of pattern array</param>
 	/// <param name="replacement">Replacement string.</param>
 	/// <returns>Modified string.</returns>
-	::std::string replace(const ::std::string &str, const ::std::string patterns[], ::std::size_t length, const ::std::string &replacement);
+	::std::string replace(::std::string str, const ::std::string patterns[], ::std::size_t length, const ::std::string_view &replacement);
 	/// <summary>
 	/// Replaces portions of the provided string that match the pattern with the provided replacement.
 	/// </summary>
@@ -91,7 +91,7 @@ namespace strx {
 	/// <param name="patterns">Pattern to look for.</param>
 	/// <param name="replacement">Replacement string.</param>
 	/// <returns>Modified string.</returns>
-	::std::string replace(const ::std::string &str, const ::std::string &pattern, const ::std::string &replacement);
+	::std::string replace(::std::string str, const ::std::string_view &pattern, const ::std::string_view &replacement);
 	/// <summary>
 	/// Replaces the provided character in the given string with the provided replacement.
 	/// </summary>
@@ -99,7 +99,7 @@ namespace strx {
 	/// <param name="c">Character to be replaced.</param>
 	/// <param name="replacement">Replacement string.</param>
 	/// <returns>Modified string.</returns>
-	::std::string replace(const ::std::string &str, const char &c, const ::std::string &replacement);
+	::std::string replace(const ::std::string_view &str, const char &c, const ::std::string_view &replacement);
 	/// <summary>
 	/// Replaces the provided pattern in the given string with the provided replacement character.
 	/// </summary>
@@ -107,7 +107,7 @@ namespace strx {
 	/// <param name="pattern">pattern to look for.</param>
 	/// <param name="replacement">Replacement character.</param>
 	/// <returns>Modified string.</returns>
-	::std::string replace(const ::std::string &str, const ::std::string &pattern, const char &replacement);
+	::std::string replace(const ::std::string_view &str, const ::std::string_view &pattern, const char &replacement);
 	/// <summary>
 	/// Replaces the provided pattern character in the given string with the provided replacement character.
 	/// </summary>
@@ -115,7 +115,7 @@ namespace strx {
 	/// <param name="pattern">Character to be replaced.</param>
 	/// <param name="replacement">Replacement character.</param>
 	/// <returns>Modified string.</returns>
-	::std::string replace(const ::std::string &str, const char &pattern, const char &replacement);
+	::std::string replace(::std::string str, const char &pattern, const char &replacement);
 
 	/// <summary>
 	/// Left pads the given string to fit a minimum width. Empty space is filled with the provided <paramref name="pad"/>.
@@ -179,13 +179,13 @@ namespace strx {
 	/// </summary>
 	/// <param name="str">String to be checked.</param>
 	/// <returns>true if the string is empty; otherwise false.</returns>
-	inline bool s_empty(const ::std::string &str) { return str.size() == 0; }
+	inline bool s_empty(const ::std::string_view &str) { return str.size() == 0; }
 	/// <summary>
 	/// Checks if the provided string is empty or only filled with white-space characters.
 	/// </summary>
 	/// <param name="str">String to be checked.</param>
 	/// <returns>true if the string is empty; otherwise false;</returns>
-	inline bool s_whitespace(const ::std::string &str) { return str.size() == 0 || str.find_first_not_of(whitespace) != ::std::string::npos; }
+	inline bool s_whitespace(const ::std::string_view &str) { return str.size() == 0 || str.find_first_not_of(whitespace) != ::std::string::npos; }
 
 	/// <summary>
 	/// Converts all characters in the provided string to their lower case variants.

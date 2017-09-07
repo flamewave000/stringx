@@ -27,7 +27,7 @@ namespace strx {
 	/// <param name="buff_size">The size of buffer to use for the underlying <seealso cref="snprintf"/> call.</param>
 	/// <returns>The formatted string.</returns>
 	template<typename T>
-	::std::string spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
+	::std::string_view spec(const char * fmt, const T &arg, const size_t &buff_size = 32) {
 		::std::string buff;
 		buff.resize(buff_size + 1);
 		int written = snprintf(const_cast<char*>(buff.data()), buff.size(), fmt, arg);
@@ -57,7 +57,7 @@ namespace strx {
 	private:
 		::std::string _fmt;
 		::std::string _val;
-		::std::vector<::std::string> _params;
+		::std::vector<::std::string_view> _params;
 		bool _is_dirty;
 #pragma endregion
 
@@ -68,13 +68,13 @@ namespace strx {
 		/// Constructs the formatter using the provided <paramref name="format"/> string.
 		/// </summary>
 		/// <param name="format">Format string</param>
-		format(const ::std::string &format) : _fmt(format) {}
+		format(const ::std::string_view &format) : _fmt(format) {}
 		format(const char *format) : _fmt(format) {}
 #pragma endregion
 
 
 	private:
-		inline format& set_param(const ::std::string &&param) {
+		inline format& set_param(const ::std::string_view &&param) {
 			_is_dirty = true;
 			_params.push_back(param);
 			return *this;
@@ -83,10 +83,14 @@ namespace strx {
 
 #pragma region operator overloads
 	public:
-		inline ::std::string &operator[](const size_t &index) { return _params[index]; }
-		inline const ::std::string &operator[](const size_t &index) const { return _params[index]; }
+		inline ::std::string_view &operator[](const size_t &index) { return _params[index]; }
+		inline const ::std::string_view &operator[](const size_t &index) const { return _params[index]; }
 
-		inline format& operator%(const char &c) { return set_param(::std::string(1, c)); }
+#ifdef string_view
+		inline format& operator%(const char &c) { return set_param(::std::string_view(1, c)); }
+#else
+		inline format& operator%(const char &c) { return set_param(::std::string_view(&c, 1)); }
+#endif
 		inline format& operator%(const int16_t &s) { return set_param(spec("%hd", s, 6)); }
 		inline format& operator%(const uint16_t &s) { return set_param(spec("%hu", s, 6)); }
 		inline format& operator%(const int32_t &i) { return set_param(spec("%d", i, 11)); }
@@ -97,6 +101,9 @@ namespace strx {
 		inline format& operator%(const double &d) { return set_param(spec("%f", d, 30)); }
 		inline format& operator%(const char* c_str) { return set_param(c_str); }
 		inline format& operator%(const ::std::string &str) { return set_param(str.c_str()); }
+#ifndef string_view
+		inline format& operator%(const ::std::string_view &str) { return set_param(str.data()); }
+#endif
 		inline ::std::string operator%(const __endf &e) { return this->str(); }
 		inline ::std::string operator%(const __endfclr &e) { return this->strclr(); }
 #pragma endregion

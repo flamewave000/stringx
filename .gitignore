@@ -40,6 +40,6 @@
 obj/
 x64/
 x86/
-Debug/
-Release/
+Debug*/
+Release*/
 .vs/
