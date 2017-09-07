@@ -1,21 +1,7 @@
 #ifndef _STRX_MANIP_H
 #define _STRX_MANIP_H
 
-#ifndef _STRING_
-#ifndef _GLIBCXX_STRING
-#include <string>
-#endif
-#endif
-#ifndef _CSTRING_
-#ifndef _GLIBCXX_cSTRING
-#include <cstring>
-#endif
-#endif
-#ifndef _VECTOR_
-#ifndef _GLIBCXX_VECTOR
-#include <vector>
-#endif
-#endif
+#include "stringx.hpp"
 
 namespace strx {
 	/// <summary>

@@ -1,6 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #include "strx_format.hpp"
+
+#ifndef _STDEXCEPT_
+#ifndef _GLIBCXX_STDEXCEPT
 #include <stdexcept>
+#endif
+#endif
 
 using namespace std;
 
