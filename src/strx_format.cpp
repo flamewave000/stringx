@@ -12,7 +12,7 @@ using namespace std;
 namespace strx
 {
 	string format::str() {
-		if (!_is_dirty) return _val;
+		if (!is_dirty()) return _val;
 		size_t first = string::npos, param_size = _params.size();
 		string buffer = _fmt;
 		for (size_t c = 0, size = buffer.size(); c < size; c++) {
@@ -49,13 +49,12 @@ namespace strx
 				first = string::npos;
 			}
 		}
-		_is_dirty = false;
 		return _val = buffer;
 	}
 	string format::strclr() {
 		string result = str();
 		clear();
-		return result;
+		return std::move(result);
 	}
 }
 #undef _CRT_SECURE_NO_WARNINGS

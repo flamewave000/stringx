@@ -51,8 +51,7 @@ namespace strx {
 	private:
 		::std::string _fmt;
 		::std::string _val;
-		::std::vector<::std::string_view> _params;
-		bool _is_dirty;
+		::std::vector<::std::string> _params;
 #pragma endregion
 
 
@@ -69,10 +68,12 @@ namespace strx {
 
 	private:
 		inline format& set_param(const ::std::string_view &&param) {
-			_is_dirty = true;
+			dirty();
 			_params.push_back(param);
 			return *this;
 		}
+		inline bool is_dirty() const { return _val.empty(); }
+		inline void dirty() { _val = ""; }
 
 
 #pragma region operator overloads
@@ -94,12 +95,19 @@ namespace strx {
 		inline format& operator%(const float &f) { return set_param(spec("%f", f, 30)); }
 		inline format& operator%(const double &d) { return set_param(spec("%f", d, 30)); }
 		inline format& operator%(const char* c_str) { return set_param(c_str); }
+#ifdef string_view
 		inline format& operator%(const ::std::string &str) { return set_param(str.c_str()); }
-#ifndef string_view
+#else
 		inline format& operator%(const ::std::string_view &str) { return set_param(str.data()); }
 #endif
 		inline ::std::string operator%(const __endf &e) { return this->str(); }
 		inline ::std::string operator%(const __endfclr &e) { return this->strclr(); }
+		inline format& operator+=(const char *c_str) { _fmt += c_str; return *this; }
+#ifdef string_view
+		inline format& operator+=(const ::std::string &str) { _fmt += str; return *this; }
+#else
+		inline format& operator+=(const ::std::string_view &str) { _fmt += str.data(); return *this; }
+#endif
 #pragma endregion
 
 
@@ -114,22 +122,22 @@ namespace strx {
 		/// Appends the provided string onto the end of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be added to list.</param>
-		inline void append(const ::std::string &arg) { _is_dirty = true; _params.push_back(arg); }
+		inline void append(const ::std::string &arg) { dirty(); _params.push_back(arg); }
 		/// <summary>
 		/// Inserts the provided string into the provided index of the argument list.
 		/// </summary>
 		/// <param name="arg">string to be inserted in the list</param>
-		inline void insert(const size_t &index, const ::std::string &arg) { _is_dirty = true; _params.insert(_params.begin() + index, arg); }
+		inline void insert(const size_t &index, const ::std::string &arg) { dirty(); _params.insert(_params.begin() + index, arg); }
 		/// <summary>
 		/// Replaces the formatted string parameter at the given index in the parameter list.
 		/// </summary>
 		/// <param name="index">Index of parameter to be replaced.</param>
 		/// <param name="arg">New value that is to replace the old value.</param>
-		inline void replace(size_t index, ::std::string arg) { _is_dirty = true; _params[index] = arg; }
+		inline void replace(size_t index, ::std::string arg) { dirty(); _params[index] = arg; }
 		/// <summary>
 		/// Clears all parameters provided up until now.
 		/// </summary>
-		inline void clear() { _is_dirty = true; _params.clear(); }
+		inline void clear() { dirty(); _params.clear(); }
 		/// <summary>
 		/// Builds the formatted string using the previously provided parameters.
 		/// </summary>
