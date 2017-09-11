@@ -13,7 +13,7 @@ library: $(SRC)
 	@rm $(OBJ)
 	
 sample: library $(SAMPLE)
-	g++ -std=c++14 $(SCFLAGS) -static $(SAMPLE) -Llib -l$(PNAME) -o $(PNAME)-sample
+	g++ -std=c++14 $(SCFLAGS) -static $(SAMPLE) -Llib -l$(PNAME) -o $(PNAME)-sample.o
 	
 clean:
-	rm -Rf lib/ $(PNAME)-sample $(OBJ) || true
+	rm -Rf lib/ $(PNAME)-sample.o $(OBJ) || true
