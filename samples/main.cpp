@@ -12,9 +12,9 @@ format& operator%(format &&fmt, const name_pair &pair) {
 }
 
 int main() {
-	name_pair name;
-	int age = 0;
-	float weight = 0;
+	name_pair name;// = { "Andrew","Fryer" };
+	int age = 0;// 27;
+	float weight = 0;// 221;
 	cout << "Please enter your first name: " << flush;
 	cin >> name.first;
 	cout << "Please enter your last name: " << flush;
@@ -25,7 +25,16 @@ int main() {
 	cin >> weight;
 
 	cout <<
-		"\nHello {0}\n{1}: {2}\n{3}: {4}\n"_f
+		"\nHello {0}\n{1}: {2}\n{#}: {4}\n"_f
+		% name
+		% lpad("age", 6)
+		% age
+		% "weight"
+		% spec("%.0f", weight)
+		<< endl;
+
+	cout <<
+		"\nHello {#}\n{#}: {#}\n{#}: {#}\n"_f
 		% name
 		% lpad("age", 6)
 		% age
