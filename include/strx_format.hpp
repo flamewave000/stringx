@@ -151,16 +151,6 @@ namespace strx {
 #pragma endregion
 	};
 
-#pragma region Formatter User Defined Literals
-	/// <summary>
-	/// Instantiates a string formatter using the provided string literal.
-	/// </summary>
-	/// <param name="c_str">String literal to use.</param>
-	/// <param name="length">Length of the string literal.</param>
-	/// <returns>Format object using the string literal.</returns>
-	inline format operator "" _f(const char *c_str, size_t length) { return ::std::move(format(::std::string(::std::move(c_str), ::std::move(length)))); }
-#pragma endregion
-
 
 #pragma region Global Operator Overloads
 	/// <summary>
@@ -184,5 +174,15 @@ namespace strx {
 	inline format operator%(const ::std::string &str, const ::std::string &val) { return format(str) % val; }
 #pragma endregion
 }
+
+#pragma region Formatter User Defined Literals
+	/// <summary>
+	/// Instantiates a string formatter using the provided string literal.
+	/// </summary>
+	/// <param name="c_str">String literal to use.</param>
+	/// <param name="length">Length of the string literal.</param>
+	/// <returns>Format object using the string literal.</returns>
+	inline ::strx::format operator "" _f(const char *c_str, size_t length) { return ::std::move(::strx::format(::std::string(::std::move(c_str), ::std::move(length)))); }
+#pragma endregion
 
 #endif
