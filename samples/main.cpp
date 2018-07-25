@@ -25,7 +25,7 @@ int main() {
 	cin >> weight;
 
 	cout <<
-		"\nHello {0}\n{1}: {2}\n{#}: {4}\n"_f
+		"\nHello {0}\n{1}: {2}\n{3}: {4}\n"_f
 		% name
 		% lpad("age", 6)
 		% age
