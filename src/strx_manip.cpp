@@ -149,11 +149,9 @@ namespace strx {
 	}
 	string replace(string str, const char &pattern, const char &replacement)
 	{
-		size_t size = str.size();
-		const char *cstr = str.c_str();
-		const void *c = nullptr;
-		while ((c = memchr(cstr, replacement, size)) != nullptr) {
-			*((char*)c) = replacement;
+		for(size_t c = 0, size = str.size(); c < size; c++) {
+			if(str[c] == pattern)
+				str[c] = replacement;
 		}
 		return str;
 	}
