@@ -32,6 +32,9 @@ lib/
 *.out
 *.app
 
+# Runtime files
+*.log
+
 # Visual Studio files
 *.user
 *.suo
