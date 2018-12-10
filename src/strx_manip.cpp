@@ -18,30 +18,6 @@ using namespace std;
 namespace strx {
 	const char * whitespace = " \n\r\t\v\f";
 
-	size_t find_first_of_pat(const std::string_view &str, const std::string_view &pattern)
-	{
-		size_t c = 0, i = 0, size = str.size(), psize = pattern.size();
-		if (size == 0 || psize == 0) {
-			return string::npos;
-		}
-		size_t pos = string::npos;
-		for (; c < size; c++) {
-			if (pattern[0] == str[c]) {
-				pos = c;
-				for (i = 0; i < psize; i++) {
-					if (pattern[i] != str[c + i]) {
-						pos = string::npos;
-						break;
-					}
-				}
-				if (pos != string::npos) {
-					return pos;
-				}
-			}
-		}
-		return string::npos;
-	}
-
 	vector<string> split(string str, const char &delim)
 	{
 		vector<string> tokens;
@@ -109,7 +85,7 @@ namespace strx {
 	string replace(string str, const string_view &pattern, const string_view &replacement)
 	{
 		size_t c = 0, psize = pattern.size();
-		while ((c = find_first_of_pat(str, pattern)) != str.npos)
+		while ((c = str.find(pattern)) != str.npos)
 		{
 			str = str.replace(c, psize, replacement);
 		}
@@ -149,13 +125,10 @@ namespace strx {
 	}
 	string replace(string str, const char &pattern, const char &replacement)
 	{
-		size_t size = str.size();
-		const char *cstr = str.c_str();
-		const void *c = nullptr;
-		while ((c = memchr(cstr, replacement, size)) != nullptr) {
-			*((char*)c) = replacement;
+		for(size_t c = 0, size = str.size(); c < size; c++) {
+			if(str[c] == pattern) str[c] = replacement;
 		}
-		return str;
+		return move(str);
 	}
 
 	string str2lower(string str) {

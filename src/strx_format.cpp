@@ -35,14 +35,14 @@ namespace strx
 			}
 			// If we have found the last one
 			else if (buffer[c] == '}' && first != string::npos) {
-				size_t index = -1;
+				size_t index = SIZE_T_MAX;
 				if (indexing == index_type::numbered) {
 					// Extract the index number of the format token
 					string index_str = buffer.substr(first + 1, (c - first) - 1);
 					// Convert the index string to an integer
 					index = (size_t)stoull(index_str, nullptr, 10);
 					// Safety check index is within range
-					if (index < 0 || index >= param_size) {
+					if (index == SIZE_T_MAX || (index >= param_size && index < SIZE_T_MAX)) {
 						throw range_error("format index '" + (index_str)+"' out of range for provided parameter list");
 						return "";
 					}
@@ -50,7 +50,7 @@ namespace strx
 				else if (indexing == index_type::generic) {
 					index = generic_indexer++;
 					// Safety check index is within range
-					if (index < 0 || index >= param_size) {
+					if (index == SIZE_T_MAX || (index >= param_size && index < SIZE_T_MAX)) {
 						throw range_error("format index out of range for provided parameter list");
 						return "";
 					}

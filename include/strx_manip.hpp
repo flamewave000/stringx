@@ -32,13 +32,6 @@ namespace strx {
 	inline bool starts_with(const ::std::string_view & str, const ::std::string_view &pattern) { return str.size() >= pattern.size() && str.find_first_of(pattern) == 0; }
 
 	/// <summary>
-	/// Searches the provided string and returns the index of the first occurrence of the provided <paramref name="pattern"/>.
-	/// </summary>
-	/// <param name="str">String to be searched.</param>
-	/// <param name="pattern">Pattern to look for.</param>
-	/// <returns>true if the pattern is found; otherwise false</returns>
-	::std::size_t find_first_of_pat(const ::std::string_view &str, const ::std::string_view &pattern);
-	/// <summary>
 	/// Splits the provided string into an array of strings using a provided delimiter as the split point.
 	/// </summary>
 	/// <param name="str">String to be split.</param>
